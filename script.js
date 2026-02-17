@@ -18,34 +18,23 @@ let keys = {};
 document.addEventListener('keydown', (e) => keys[e.code] = true);
 document.addEventListener('keyup', (e) => keys[e.code] = false);
 
-// Eventos Mobile
-const setupMobile = (id, key) => {
+// Eventos Touch (Melhorados para Mobile)
+const handleTouch = (id, key) => {
     const btn = document.getElementById(id);
     btn.addEventListener('touchstart', (e) => { e.preventDefault(); keys[key] = true; });
     btn.addEventListener('touchend', (e) => { e.preventDefault(); keys[key] = false; });
 };
 
-setupMobile('btnLeft', 'ArrowLeft');
-setupMobile('btnRight', 'ArrowRight');
-setupMobile('btnJump', 'Space');
-
-function spawnHeart(x, y) {
-    const heart = document.createElement('div');
-    heart.innerText = '❤️';
-    heart.className = 'floating-heart';
-    heart.style.left = x + 10 + 'px';
-    heart.style.bottom = y + 40 + 'px';
-    world.appendChild(heart);
-    setTimeout(() => heart.remove(), 600);
-}
+handleTouch('btnLeft', 'ArrowLeft');
+handleTouch('btnRight', 'ArrowRight');
+handleTouch('btnJump', 'Space');
 
 function checkCollisions() {
     const pipes = document.querySelectorAll('.obstacle');
     const blocks = document.querySelectorAll('.item-block');
 
     pipes.forEach(pipe => {
-        let pX = pipe.offsetLeft;
-        if (player.x + player.width > pX && player.x < pX + 80 && player.y < 120) {
+        if (player.x + player.width > pipe.offsetLeft && player.x < pipe.offsetLeft + pipe.offsetWidth && player.y < 120) {
             resetPlayer();
         }
     });
@@ -54,13 +43,10 @@ function checkCollisions() {
         let bX = block.offsetLeft;
         let bY = parseInt(block.style.bottom);
         if (player.x + player.width > bX && player.x < bX + 45 && 
-            player.y + player.height > bY && player.y + player.height < bY + 25 && 
-            player.velY < 0) {
-            
+            player.y + player.height > bY && player.y + player.height < bY + 25 && player.velY < 0) {
             if (!block.classList.contains('used')) {
-                block.classList.add('bump', 'used');
+                block.classList.add('used');
                 block.style.background = '#888';
-                block.innerText = ''; 
                 hearts++;
                 heartDisplay.innerText = hearts;
                 spawnHeart(bX, bY);
@@ -68,6 +54,14 @@ function checkCollisions() {
             }
         }
     });
+}
+
+function spawnHeart(x, y) {
+    const h = document.createElement('div');
+    h.innerText = '❤️'; h.className = 'floating-heart';
+    h.style.left = x + 'px'; h.style.bottom = y + 50 + 'px';
+    world.appendChild(h);
+    setTimeout(() => h.remove(), 600);
 }
 
 function resetPlayer() {
@@ -81,10 +75,7 @@ function gameLoop() {
 
     if (keys['ArrowRight']) { player.velX += player.speed; mario.style.transform = "scaleX(1)"; }
     if (keys['ArrowLeft']) { player.velX -= player.speed; mario.style.transform = "scaleX(-1)"; }
-    if ((keys['ArrowUp'] || keys['Space']) && player.grounded) {
-        player.velY = player.jumpForce;
-        player.grounded = false;
-    }
+    if ((keys['ArrowUp'] || keys['Space']) && player.grounded) { player.velY = player.jumpForce; player.grounded = false; }
 
     player.velX *= player.friction;
     player.velY += player.gravity;
@@ -99,18 +90,22 @@ function gameLoop() {
     mario.style.left = player.x + "px";
     mario.style.bottom = player.y + "px";
 
-    let camX = -player.x + (window.innerWidth / 3);
+    // AJUSTE DA CÂMERA RESPONSIVA
+    let camX = -player.x + (window.innerWidth / 4);
     if (camX > 0) camX = 0;
     world.style.transform = `translateX(${camX}px)`;
 
-    if (player.x >= 2850) { isGameOver = true; message.classList.remove('hidden'); }
+    if (player.x >= 2800) { isGameOver = true; message.classList.remove('hidden'); }
     requestAnimationFrame(gameLoop);
 }
 
 gameLoop();
 
+// Botão foge
 const btnNao = document.getElementById('btnNao');
-btnNao.addEventListener('mouseover', () => {
-    btnNao.style.left = Math.random() * 200 + 'px';
-    btnNao.style.top = Math.random() * 100 + 'px';
+btnNao.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    btnNao.style.position = 'fixed';
+    btnNao.style.left = Math.random() * 70 + '%';
+    btnNao.style.top = Math.random() * 70 + '%';
 });
