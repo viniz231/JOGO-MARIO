@@ -1,18 +1,23 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
+
 body { 
     background: #000; 
-    overflow: hidden; 
-    font-family: 'Arial', sans-serif; 
-    user-select: none;
-    touch-action: none; /* Impede o scroll da página no celular */
+    height: 100dvh; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    touch-action: none;
+    font-family: 'Arial', sans-serif;
 }
 
 .game-viewport { 
     width: 100vw; 
-    height: 100vh; 
+    height: 100dvh;
+    max-height: 600px; 
     background: #5c94fc; 
     position: relative; 
-    overflow: hidden; 
+    overflow: hidden;
 }
 
 .game-world { 
@@ -22,48 +27,58 @@ body {
 }
 
 .score { 
-    position: fixed; top: 10px; left: 10px; 
-    color: white; font-size: clamp(16px, 4vw, 24px); 
+    position: fixed; top: 15px; left: 15px; 
+    color: white; font-size: 20px; font-weight: bold;
     z-index: 100; text-shadow: 2px 2px #000; 
 }
 
 #mario { 
     position: absolute; 
-    width: clamp(40px, 10vw, 60px); /* Tamanho adaptável */
-    bottom: 40px; 
+    width: 50px; 
+    bottom: 60px; /* Sobe o Mario para não ficar atrás dos botões */
     left: 100px; 
     z-index: 10; 
 }
 
 .floor { 
-    position: absolute; bottom: 0; width: 100%; height: 40px; 
-    background: #e86830; border-top: 4px solid #4e2e1e; 
+    position: absolute; 
+    bottom: 0; 
+    width: 100%; 
+    height: 60px; 
+    background: #e86830; 
+    border-top: 5px solid #4e2e1e;
 }
 
 /* Blocos e Obstáculos */
 .block { position: absolute; width: 45px; height: 45px; background: #f89010; border: 3px solid #000; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; }
-.pipe { position: absolute; bottom: 40px; width: clamp(60px, 15vw, 80px); }
-.floating-heart { position: absolute; font-size: 25px; animation: heartUp 0.6s forwards; }
+.pipe { position: absolute; bottom: 60px; width: 70px; }
+.cloud { position: absolute; width: 200px; opacity: 0.6; }
 
-@keyframes heartUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-80px); opacity: 0; } }
-
-/* CONTROLES MOBILE (Ocupando a parte de baixo) */
+/* CONTROLES MOBILE - Ajustados para não cobrir o Mario */
 .mobile-controls {
-    position: fixed; bottom: 5vh; left: 0; width: 100%;
-    display: flex; justify-content: space-between; padding: 0 5vw;
+    position: fixed; bottom: 10px; left: 0; width: 100%;
+    display: flex; justify-content: space-between; padding: 0 20px;
     z-index: 200; pointer-events: none;
 }
-.mobile-controls button {
-    pointer-events: auto; width: 18vw; height: 18vw; max-width: 80px; max-height: 80px;
-    background: rgba(255, 255, 255, 0.4); border: 3px solid white;
-    border-radius: 15px; color: white; font-size: 14px; font-weight: bold;
-    display: flex; align-items: center; justify-content: center;
-    backdrop-filter: blur(5px);
-}
-#btnJump { background: rgba(255, 64, 129, 0.6); width: 25vw; max-width: 120px; }
 
-/* Mensagem de Vitória */
+.mobile-controls button {
+    pointer-events: auto; 
+    width: 65px; height: 65px;
+    background: rgba(255, 255, 255, 0.3); 
+    border: 3px solid white;
+    border-radius: 50%; color: white; font-weight: bold;
+    display: flex; align-items: center; justify-content: center;
+    backdrop-filter: blur(4px);
+}
+
+#btnJump { 
+    background: rgba(160, 32, 240, 0.5); 
+    width: 90px; height: 90px;
+}
+
+/* Vitória */
+.hidden { display: none !important; }
 #message { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 1000; }
 .card { background: white; padding: 30px; border-radius: 20px; text-align: center; width: 85%; max-width: 400px; border: 5px solid #ff4081; }
-
-.hidden { display: none !important; }
+.btn-sim { background: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 8px; font-weight: bold; }
+.btn-nao { background: #f44336; color: white; padding: 10px 20px; border: none; border-radius: 8px; position: relative; }
